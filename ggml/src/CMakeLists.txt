@@ -1352,7 +1352,6 @@ add_library(ggml
             ${GGML_SOURCES_BLAS}      ${GGML_HEADERS_BLAS}
             ${GGML_SOURCES_LLAMAFILE} ${GGML_HEADERS_LLAMAFILE}
             ${GGML_SOURCES_CANN}      ${GGML_HEADERS_CANN}
-            ggml-aarch64.c            ggml-aarch64.h
             )
 
 if (EMSCRIPTEN)
@@ -1361,7 +1360,6 @@ endif()
 
 target_compile_definitions(ggml PUBLIC    ${GGML_CDEF_PUBLIC})
 target_include_directories(ggml PUBLIC  ../include)
-target_include_directories(ggml PUBLIC ../../../../include)
 target_include_directories(ggml PRIVATE . ${GGML_EXTRA_INCLUDES})
 target_link_directories   (ggml PRIVATE   ${GGML_EXTRA_LIBDIRS})
 target_compile_features   (ggml PRIVATE c_std_11) # don't bump
