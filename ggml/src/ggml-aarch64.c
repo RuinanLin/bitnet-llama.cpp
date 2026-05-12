@@ -17,7 +17,6 @@
 #include <stdio.h>  // for GGML_ASSERT
 
 #include "ggml-aarch64.h"
-#include "gemm-config.h"
 
 #if defined(__GNUC__)
 #pragma GCC diagnostic ignored "-Woverlength-strings"
@@ -599,17 +598,21 @@ size_t quantize_q4_0_8x8(const float * restrict src, void * restrict dst, int64_
     return quantize_q4_0_nr_bl(src, dst, nrow, n_per_row, 8, 8);
 }
 
+// Stubs for BitNet i2 functions (not needed for f32 inference)
+size_t quantize_i2_s(const float * src, void * dst, int64_t nrow, int64_t n_per_row, const float * quant_weights) {
+    UNUSED(src); UNUSED(dst); UNUSED(nrow); UNUSED(n_per_row); UNUSED(quant_weights);
+    GGML_ASSERT(false && "quantize_i2_s: BitNet i2 quantization not supported");
+    return 0;
+}
+
+void ggml_vec_dot_i2_i8_s(int n, float * s, size_t bs, const void * vx, size_t bx, const void * vy, size_t by, int nrc) {
+    UNUSED(n); UNUSED(s); UNUSED(bs); UNUSED(vx); UNUSED(bx); UNUSED(vy); UNUSED(by); UNUSED(nrc);
+    GGML_ASSERT(false && "ggml_vec_dot_i2_i8_s: BitNet i2 quantization not supported");
+}
+
 void ggml_gemv_i2_i8_s(int n, float * GGML_RESTRICT s, size_t bs, const void * GGML_RESTRICT vx, const void * GGML_RESTRICT vy, int nr, int nc) {
-#if defined(ACT_PARALLEL)
-    for (int64_t iir0 = 0; iir0 < nc; iir0 += 1) {
-        ggml_vec_dot_i2_i8_s(n, s + iir0, 1, vx + iir0 * n / 4, n, vy, 0, 1);
-    }
-#else
-    const int64_t blck_0 = 16;
-    for (int64_t iir0 = 0; iir0 < nc; iir0 += blck_0) {
-        ggml_vec_dot_i2_i8_s(n, s + iir0, 1, vx + iir0 * n / 4, n, vy, 0, blck_0);
-    }
-#endif
+    UNUSED(n); UNUSED(s); UNUSED(bs); UNUSED(vx); UNUSED(vy); UNUSED(nr); UNUSED(nc);
+    GGML_ASSERT(false && "ggml_gemv_i2_i8_s: BitNet i2 quantization not supported");
 }
 
 void ggml_gemv_q4_0_4x4_q8_0(int n, float * restrict s, size_t bs, const void * restrict vx, const void * restrict vy, int nr, int nc) {
@@ -1034,41 +1037,8 @@ void ggml_gemv_q4_0_8x8_q8_0(int n, float * restrict s, size_t bs, const void * 
 }
 
 void ggml_gemm_i2_i8_s(int n, float * GGML_RESTRICT s, size_t bs, const void * GGML_RESTRICT vx, const void * GGML_RESTRICT vy, int nr, int nc) {
-#if defined(ACT_PARALLEL)
-    const int64_t row_block = ROW_BLOCK_SIZE;
-    const int64_t col_block = COL_BLOCK_SIZE;
-
-    for (int64_t c0 = 0; c0 < nc; c0 += col_block) {
-        int64_t cur_c = (c0 + col_block <= nc) ? col_block : (nc - c0);
-        for (int64_t r0 = 0; r0 < nr; r0 += row_block) {
-            int64_t cur_r = (r0 + row_block <= nr) ? row_block : (nr - r0);
-            const void * vy_r = (const uint8_t *)vy + r0 * n;
-            for (int64_t c = 0; c < cur_c; ++c) {
-                const int64_t col = c0 + c;
-                float * s_col = s + col;
-                const void * vx_col = (const uint8_t *)vx + col * n / 4;
-                ggml_vec_dot_i2_i8_s(n, s_col + r0 * bs, bs, vx_col, n, vy_r, n, cur_r);
-            }
-        }
-    }
-#else
-    const int64_t row_block = ROW_BLOCK_SIZE;
-    const int64_t col_block = COL_BLOCK_SIZE;
-
-    for (int64_t r0 = 0; r0 < nr; r0 += row_block) {
-            int64_t cur_r = (r0 + row_block <= nr) ? row_block : (nr - r0);
-        for (int64_t c0 = 0; c0 < nc; c0 += col_block) {
-            int64_t cur_c = (c0 + col_block <= nc) ? col_block : (nc - c0);
-            const void * vx_c = (const uint8_t *)vx + c0 * n / 4;
-            for (int64_t r = 0; r < cur_r; ++r) {
-                const int64_t row = r0 + r;
-                float * s_row = s + row * bs;
-                const void * vy_row = (const uint8_t *)vy + row * n;
-                ggml_vec_dot_i2_i8_s(n, s_row + c0, bs, vx_c, n, vy_row, n, cur_c);
-            }
-        }
-    }
-#endif
+    UNUSED(n); UNUSED(s); UNUSED(bs); UNUSED(vx); UNUSED(vy); UNUSED(nr); UNUSED(nc);
+    GGML_ASSERT(false && "ggml_gemm_i2_i8_s: BitNet i2 quantization not supported");
 }
 
 void ggml_gemm_q4_0_4x4_q8_0(int n, float * restrict s, size_t bs, const void * restrict vx, const void * restrict vy, int nr, int nc) {
