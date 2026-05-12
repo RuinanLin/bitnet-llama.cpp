@@ -1024,7 +1024,7 @@ void quantize_row_q8_0(const float * restrict x, void * restrict vy, int64_t k) 
         _mm_storeu_si128((__m128i *)(y[i].qs + 16), ni4);
 #endif
     }
-#elif defined(__riscv_v_intrinsic)
+#elif defined(__riscv_v_intrinsic) && defined(__riscv_zve32f)
 
     size_t vl = __riscv_vsetvl_e32m4(QK8_0);
 
@@ -1368,7 +1368,7 @@ void quantize_row_q8_1(const float * restrict x, void * restrict vy, int64_t k) 
         _mm_storeu_si128((__m128i *)(y[i].qs + 16), ni4);
 #endif
     }
-#elif defined(__riscv_v_intrinsic)
+#elif defined(__riscv_v_intrinsic) && defined(__riscv_zve32f)
 
     size_t vl = __riscv_vsetvl_e32m4(QK8_1);
 
@@ -4738,7 +4738,7 @@ void ggml_vec_dot_q4_0_q8_0(int n, float * restrict s, size_t bs, const void * r
     }
 
     sumf = hsum_float_4x4(acc_0, acc_1, acc_2, acc_3);
-#elif defined(__riscv_v_intrinsic)
+#elif defined(__riscv_v_intrinsic) && defined(__riscv_zve32x)
     size_t vl = __riscv_vsetvl_e8m1(qk/2);
 
     for (; ib < nb; ++ib) {
@@ -5092,7 +5092,7 @@ void ggml_vec_dot_q4_1_q8_1(int n, float * restrict s, size_t bs, const void * r
     }
 
     sumf = hsum_float_8(acc) + summs;
-#elif defined(__riscv_v_intrinsic)
+#elif defined(__riscv_v_intrinsic) && defined(__riscv_zve32x)
     size_t vl = __riscv_vsetvl_e8m1(qk/2);
 
     for (; ib < nb; ++ib) {
@@ -5412,7 +5412,7 @@ void ggml_vec_dot_q5_0_q8_0(int n, float * restrict s, size_t bs, const void * r
     }
 
     sumf = hsum_float_8(acc);
-#elif defined(__riscv_v_intrinsic)
+#elif defined(__riscv_v_intrinsic) && defined(__riscv_zve32x)
     uint32_t qh;
 
     size_t vl = __riscv_vsetvl_e8m1(qk/2);
@@ -5783,7 +5783,7 @@ void ggml_vec_dot_q5_1_q8_1(int n, float * restrict s, size_t bs, const void * r
     }
 
     sumf = hsum_float_8(acc) + summs;
-#elif defined(__riscv_v_intrinsic)
+#elif defined(__riscv_v_intrinsic) && defined(__riscv_zve32x)
     uint32_t qh;
 
     size_t vl = __riscv_vsetvl_e8m1(qk/2);
@@ -6192,7 +6192,7 @@ void ggml_vec_dot_q8_0_q8_0(int n, float * restrict s, size_t bs, const void * r
     }
 
     sumf = hsum_float_8(acc);
-#elif defined(__riscv_v_intrinsic)
+#elif defined(__riscv_v_intrinsic) && defined(__riscv_zve32x)
     size_t vl = __riscv_vsetvl_e8m1(qk);
 
     for (; ib < nb; ++ib) {
@@ -7029,7 +7029,7 @@ void ggml_vec_dot_q2_K_q8_K(int n, float * restrict s, size_t bs, const void * r
 
     *s = hsum_float_8(acc);
 
-#elif defined __riscv_v_intrinsic
+#elif defined __riscv_v_intrinsic && defined(__riscv_zve32x)
 
     float sumf = 0;
     uint8_t temp_01[32] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -7711,7 +7711,7 @@ void ggml_vec_dot_q3_K_q8_K(int n, float * restrict s, size_t bs, const void * r
 
     *s = hsum_float_8(acc);
 
-#elif defined __riscv_v_intrinsic
+#elif defined __riscv_v_intrinsic && defined(__riscv_zve32x)
 
     uint32_t aux[3];
     uint32_t utmp[4];
@@ -8365,7 +8365,7 @@ void ggml_vec_dot_q4_K_q8_K(int n, float * restrict s, size_t bs, const void * r
 
     *s = hsum_float_8(acc) + _mm_cvtss_f32(acc_m);
 
-#elif defined __riscv_v_intrinsic
+#elif defined __riscv_v_intrinsic && defined(__riscv_zve32x)
 
     const uint8_t * scales = (const uint8_t*)&utmp[0];
     const uint8_t * mins   = (const uint8_t*)&utmp[2];
@@ -8970,7 +8970,7 @@ void ggml_vec_dot_q5_K_q8_K(int n, float * restrict s, size_t bs, const void * r
 
     *s = hsum_float_8(acc) + summs;
 
-#elif defined __riscv_v_intrinsic
+#elif defined __riscv_v_intrinsic && defined(__riscv_zve32x)
 
     const uint8_t * scales = (const uint8_t*)&utmp[0];
     const uint8_t * mins   = (const uint8_t*)&utmp[2];
@@ -9646,7 +9646,7 @@ void ggml_vec_dot_q6_K_q8_K(int n, float * restrict s, size_t bs, const void * r
 
     *s = hsum_float_8(acc);
 
-#elif defined __riscv_v_intrinsic
+#elif defined __riscv_v_intrinsic && defined(__riscv_zve32x)
 
     float sumf = 0;
     for (int i = 0; i < nb; ++i) {
