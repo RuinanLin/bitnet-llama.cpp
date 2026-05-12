@@ -26,8 +26,6 @@
 #  include "ggml-metal.h"
 #endif
 
-#include "ggml-bitnet.h"
-
 // TODO: replace with ggml API call
 #define QK_K 256
 
